@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home Automation Interface</title>
+        <script>
+		
+	    //strings for the LED states
+		strLED1 = "";
+		strLED2 = "";
+		strLED3 = "";
+		strLED4 = "";
+		
+		
+
+		
+		function GetArduinoIO()//function to return the IO from the arduino
+		{
+			nocache = "&nocache=" + Math.random() * 1000000;
+			
+			var request = new XMLHttpRequest();//this will be the request variable
+			
+			request.onreadystatechange = function()//function executes when readystate changes
+			{
+				if (this.readyState == 4)//if the operation is complete (4) 
+				{
+					if (this.status == 200) //if the status is OK
+					{
+						if (this.responseXML != null)//if the XML file is recieved 
+						{
+							//series of if statements that modifies the XML
+							if (this.responseXML.getElementsByTagName('LED')[0].childNodes[0].nodeValue === "checked") 
+							{
+								document.LED_form.LED1.checked = true;
+							}
+							else
+							{
+								document.LED_form.LED1.checked = false;
+							}
+							// LED 2
+							if (this.responseXML.getElementsByTagName('LED')[1].childNodes[0].nodeValue === "checked") 
+							{
+								document.LED_form.LED2.checked = true;
+							}
+							else
+							{
+								document.LED_form.LED2.checked = false;
+							}
+							//LED 3
+							if (this.responseXML.getElementsByTagName('LED')[2].childNodes[0].nodeValue === "checked") 
+							{
+								document.LED_form.LED3.checked = true;
+							}
+							else 
+							{
+								document.LED_form.LED3.checked = false;
+							}
+							//LED 4
+							if (this.responseXML.getElementsByTagName('LED')[3].childNodes[0].nodeValue === "checked") 
+							{
+								document.LED_form.LED4.checked = true;
+							}
+							else
+							{
+								document.LED_form.LED4.checked = false;
+							}
+						}
+					}
+				}
+			}
+			
+			
+			request.open("GET", "ajaxin" + strLED1 + strLED2 + strLED3 + strLED4 + nocache, true);//send GET request and service LED's
+			request.send(null);
+			
+			setTimeout('GetArduinoIO()', 1000);//after 1 second, call function
+			
+			//clear the strings
+			strLED1 = "";
+			strLED2 = "";
+			strLED3 = "";
+			strLED4 = "";
+		}
+		
+		//function that services the LED's when boxes are checked/unchecked
+		function GetCheck()
+		{
+			if (LED_form.LED1.checked)  //if checked then it should be on(1), else off (0)
+			{
+				strLED1 = "&LED1=1";
+			}
+			else {
+				strLED1 = "&LED1=0";
+			}
+			if (LED_form.LED2.checked)  //if checked then it should be on(1), else off (0)
+			{
+				strLED2 = "&LED2=1";
+			}
+			else {
+				strLED2 = "&LED2=0";
+			}
+			
+			if (LED_form.LED3.checked)  //if checked then it should be on(1), else off (0)
+			{
+				strLED3 = "&LED3=1";
+			}
+			else {
+				strLED3 = "&LED3=0";
+			}
+			if (LED_form.LED4.checked) //if checked then it should be on(1), else off (0)
+			{
+				strLED4 = "&LED4=1";
+			}
+			else {
+				strLED4 = "&LED4=0";
+			}
+			
+		}
+		
+	</script>
+	<style>
+	
+	
+	
+	
+	
+		.container {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 30px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+}
+
+
+.container input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+
+.container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+		.IO_box {
+			float: left;
+			margin: 0 50px 50px 0;
+			border: 10px solid white;
+			padding: 0 30px 0 30px;
+			width: 200px;
+		}
+		
+		h2 {
+			font-size: 170%;
+			color: #4e98ff;
+			margin: 30px 0 70px 0;
+		}
+	    form {
+			font-size: 150%;
+			color: white;
+		}
+		
+	</style>
+    </head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<body bgcolor= black>
+	
+
+
+    <body onload="GetArduinoIO()">
+
+		<div class="IO_box">
+			<h2>HomeDuino</h2>
+			<form id="check_LEDs" name="LED_form">
+			
+			<label class="container">
+			<input type="checkbox" name="LED1" value="0" onclick="GetCheck()" />Fan<br /><br />
+			<span class="checkmark"></span>
+			</label>
+		
+			
+			<label class="container">
+			<input type="checkbox" name="LED2" value="0" onclick="GetCheck()" />Flood Light<br /><br />
+			<span class="checkmark"></span>
+			</label>
+			
+			<label class="container">
+			<input type="checkbox" name="LED3" value="0" onclick="GetCheck()" />Porch Light<br /><br />
+			<span class="checkmark"></span>
+			</label>
+			
+			
+			<label class="container">
+			<input type="checkbox" name="LED4" value="0" onclick="GetCheck()" />Inside Light<br /><br />
+			<span class="checkmark"></span>
+			</label>
+			
+			</form>
+		</div>
+		
+
+    </body>
+</html>
